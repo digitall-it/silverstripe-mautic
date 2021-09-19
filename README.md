@@ -10,6 +10,12 @@
 composer require digitall-it/silverstripe-mautic
 ```
 
+if you would like to clone from VCS, preserving the .git folder instead of packagist, issue
+
+```
+composer require digitall-it/silverstripe-mautic --prefer-source
+```
+
 ## License
 See [License](license.md)
 
