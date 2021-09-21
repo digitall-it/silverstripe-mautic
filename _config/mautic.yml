@@ -1,3 +1,3 @@
 Silverstripe\SiteConfig\SiteConfig:
   extensions:
-    - DigitallIt\MauticSilverstripe\MauticSiteConfig
+    - Digitall\Mautic\SiteConfig

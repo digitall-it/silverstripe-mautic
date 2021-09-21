@@ -18,8 +18,8 @@
     },
     "autoload": {
         "psr-4": {
-            "DigitallIt\\MauticSilverstripe\\": "src/",
-            "DigitallIt\\MauticSilverstripe\\Tests\\": "tests/"
+            "Digitall\\Mautic\\": "src/",
+            "Digitall\\Mautic\\Tests\\": "tests/"
         }
     },
     "extra": {

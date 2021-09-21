@@ -3,8 +3,8 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="DigitallIt\MauticSilverstripe\" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="false" packagePrefix="DigitallIt\MauticSilverstripe\Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="Digitall\Mautic\" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="false" packagePrefix="Digitall\Mautic\Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/silverstripe/admin" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/silverstripe/config" />
