@@ -5,7 +5,7 @@ use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\ORM\DataExtension;
 
 
-class SiteConfig extends DataExtension
+class MauticSiteConfig extends DataExtension
 {
 
     private static $db = [
