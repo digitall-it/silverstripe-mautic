@@ -1,3 +1,6 @@
 Silverstripe\SiteConfig\SiteConfig:
   extensions:
-    - Digitall\Mautic\Extensions\MauticSiteConfig
+    - Digitall\Mautic\Extensions\SiteConfig
+SilverStripe\UserForms\Model\UserDefinedForm:
+  extensions:
+    - Digitall\Mautic\Extensions\MauticUserFormExtension
