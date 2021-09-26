@@ -12,3 +12,6 @@ SilverStripe\Core\Injector\Injector:
     factory: SilverStripe\Core\Cache\CacheFactory
     constructor:
       namespace: "mautic"
+SilverStripe\UserForms\Model\Submission\SubmittedForm:
+  extensions:
+    - Digitall\Mautic\Extensions\MauticUserFormSubmittedExtension

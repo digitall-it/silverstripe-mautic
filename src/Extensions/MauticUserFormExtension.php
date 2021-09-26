@@ -14,9 +14,6 @@ use SilverStripe\Core\Injector\Injector;
 
 class MauticUserFormExtension extends DataExtension
 {
-    /**
-     * @var array Fields on the user defined form page.
-     */
     private static $db = [
         'PushToMautic' => 'Boolean',
         'MauticSegment' => 'Varchar',
@@ -28,10 +25,9 @@ class MauticUserFormExtension extends DataExtension
         $options->add(CheckboxField::create('PushToMautic', 'Push to Mautic'));
         $options->add(TextField::create('MauticCheckboxFieldName', 'Checkbox field name')->setDescription('Set a checkbox merge name to check before pushing to Mautic'));
 
-        $options->add(DropdownField::create('MauticSegment', 'Mautic Segment',
-            Injector::inst()->get('Mautic')->getSegmentsAsKeyValue())
-        );
+        $Mautic = Injector::inst()->get('Mautic');
+        $Mautic->setAuth(SiteConfig::current_site_config());
+
+        $options->add(DropdownField::create('MauticSegment', 'Mautic Segment', $Mautic->getSegmentsAsKeyValue()));
     }
-
-
 }

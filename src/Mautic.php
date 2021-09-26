@@ -3,13 +3,12 @@
 use Mautic\Auth\ApiAuth;
 use Mautic\MauticApi;
 use SilverStripe\Core\Injector\Injector;
-use Silverstripe\SiteConfig\SiteConfig;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Core\Flushable;
 
 class Mautic implements Flushable
 {
-    const CACHE_TTL = 60*60*24*30; // Cache for 30 days
+    const CACHE_TTL = 60 * 60 * 24 * 30; // Cache for 30 days
 
     public function __construct()
     {
@@ -26,24 +25,20 @@ class Mautic implements Flushable
     public function getSegmentsAsKeyValue()
     {
         $array = array();
-        $segments=$this->getSegments();
+        $segments = $this->getSegments();
         $lists = $segments["lists"];
         foreach ($lists as $list) $array[$list['alias']] = $list['name'];
         return $array;
     }
 
-    public function getSettings()
+    public function setAuth($settings)
     {
-        if (!isset($this->_settings)) {
-            $config = SiteConfig::current_site_config();
-
-            $this->_settings = array(
-                'userName' => $config->MauticUsername,
-                'password' => $config->MauticPassword,
-            );
-            $this->_apiURL = $config->MauticURL . "/api/";
-        }
-        return $this->_settings;
+        // @TODO: Only Basic Auth at this stage is supported
+        $this->_settings = array(
+            'userName' => $settings->MauticUsername,
+            'password' => $settings->MauticPassword,
+        );
+        $this->_apiURL = $settings->MauticURL . "/api/";
     }
 
 
@@ -57,7 +52,7 @@ class Mautic implements Flushable
 
         if (!isset($this->_apiauth)) {
             $this->_apiauth = Injector::inst()->get('Mautic\Auth\ApiAuth')
-                ->newAuth($this->getSettings(), 'BasicAuth');
+                ->newAuth($this->_settings, 'BasicAuth');
         }
         return $this->_apiauth;
     }
@@ -74,7 +69,7 @@ class Mautic implements Flushable
 
     public function getSegments()
     {
-        if(!isset($this->_segments)) {
+        if (!isset($this->_segments)) {
             if ($this->_cache->has('segments')) {
                 $this->_segments = unserialize($this->_cache->get('segments', self::CACHE_TTL));
             } else {
@@ -86,38 +81,52 @@ class Mautic implements Flushable
         return $this->_segments;
     }
 
-    public function getMappings()
-    {
-        if (!isset($this->_mappings)) {
-            $this->_mappings = SiteConfig::current_site_config()->MauticFieldMapping;
-        }
 
-        $mappings = preg_split('/\r\n|\r|\n/', $this->_mappings);
 
+    public function mapFields($fields,$mappings) {
+
+        $mappings = preg_split('/\r\n|\r|\n/', $mappings);
+        $mappings_array = array();
         foreach ($mappings as $mapping) {
             $mapping_array = explode(':', $mapping);
             $mappings_array[$mapping_array[0]] = $mapping_array[1];
+        };
+
+        $mauticData=array();
+
+        foreach ($mappings_array as $form_key => $mautic_key) {
+            if (array_key_exists($form_key, $fields)) $mauticData[$mautic_key] = $fields[$form_key];
         }
-        return isset($mappings_array) ? $mappings_array : array();
+        return $mauticData;
     }
 
     public function addContact(array $data)
     {
         $contactAPI = $this->getContextAPI('contacts');
+        if(count($data)==0) return false;
+            //user_error('Mapping mismatch.', E_USER_ERROR);
 
-        $mappings = $this->getMappings();
-
-        foreach ($mappings as $form_key => $mautic_key) {
-            if (array_key_exists($form_key, $data)) $mauticData[$mautic_key] = $data[$form_key];
-        }
-        if (isset($mauticData)) {
-            $response = $contactAPI->create($mauticData);
+            $response = $contactAPI->create($data);
             $contact = $response[$contactAPI->itemName()];
 
             return $contact;
+    }
+
+    public function addOrUpdateContact($data, $segment_alias = null)
+    {
+        if(!array_key_exists('email',$data)) return;
+        // @todo: only the contact segment is updated
+
+        $contact = $this->getContactByEmailAddress($data['email']);
+
+        if ($contact === false) {
+            $contact = $this->addContact($data);
         } else {
-            user_error('Mapping mismatch.', E_USER_ERROR);
+            // @todo: only the contact segment is updated, not its details.
         }
+
+        $this->addOrUpdateContactSegments($contact, $segment_alias);
+
     }
 
     public function addContactToSegment($contact, $segment_alias)
@@ -138,6 +147,7 @@ class Mautic implements Flushable
 
         if (!$this->isContactInSegment($contact, $segment_alias)) $this->addContactToSegment($contact, $segment_alias);
     }
+
 
     public function isContactInSegment($contact, $segment_alias)
     {
