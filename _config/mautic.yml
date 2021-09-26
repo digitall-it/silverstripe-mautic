@@ -1,6 +1,14 @@
 Silverstripe\SiteConfig\SiteConfig:
   extensions:
-    - Digitall\Mautic\Extensions\SiteConfig
+    - Digitall\Mautic\Extensions\MauticSiteConfig
+Silverstripe\SiteConfig\SiteConfigLeftAndMain:
+  extensions:
+    - Digitall\Mautic\Extensions\MauticSiteConfigLeftAndMain
 SilverStripe\UserForms\Model\UserDefinedForm:
   extensions:
     - Digitall\Mautic\Extensions\MauticUserFormExtension
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.mautic:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "mautic"
