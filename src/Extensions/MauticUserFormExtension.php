@@ -22,6 +22,7 @@ class MauticUserFormExtension extends DataExtension
 
     public function updateFormOptions(FieldList $options)
     {
+        if (!SiteConfig::current_site_config()->MauticActive) return;
         $options->add(CheckboxField::create('PushToMautic', 'Push to Mautic'));
         $options->add(TextField::create('MauticCheckboxFieldName', 'Checkbox field name')->setDescription('Set a checkbox merge name to check before pushing to Mautic'));
 

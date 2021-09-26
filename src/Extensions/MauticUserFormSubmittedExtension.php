@@ -11,6 +11,7 @@ class MauticUserFormSubmittedExtension extends DataExtension
 {
     public function updateAfterProcess()
     {
+        if (!SiteConfig::current_site_config()->MauticActive) return;
         if ($this->owner->Parent->PushToMautic) {
 
             $fields = array();
